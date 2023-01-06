@@ -44,7 +44,7 @@ class ReduceLROnPlateauAnnealing(ReduceLROnPlateau):
 
     Example:
         >>> optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
-        >>> scheduler = ReduceLROnPlateau(optimizer, 'min')
+        >>> scheduler = ReduceLROnPlateauAnnealing(optimizer, min_lr=5e-5, max_lr=1e-1)
         >>> for epoch in range(10):
         >>>     train(...)
         >>>     val_loss = validate(...)
@@ -54,6 +54,8 @@ class ReduceLROnPlateauAnnealing(ReduceLROnPlateau):
     def __init__(self, optimizer, min_lr, max_lr=None, mode='min', factor=0.1, patience=10,
                  threshold=1e-4, threshold_mode='rel', cooldown=0,
                  eps=1e-8, verbose=False):
+        assert self._is_valid_lr(min_lr) and self._is_valid_lr(max_lr, allow_None=True)
+
         super(ReduceLROnPlateauAnnealing, self).__init__(optimizer, mode=mode, factor=factor, patience=patience,
                                                 threshold=threshold, threshold_mode=threshold_mode, cooldown=cooldown,
                                                 min_lr=min_lr, eps=eps, verbose=verbose)
@@ -72,8 +74,17 @@ class ReduceLROnPlateauAnnealing(ReduceLROnPlateau):
         for i, param_group in enumerate(self.optimizer.param_groups):
             old_lr = float(param_group['lr'])
             lr_cand = old_lr * self.factor
-            new_lr = self.max_lrs[i] if abs(lr_cand - self.min_lrs[i]) < self.eps else lr_cand
+            new_lr = self.max_lrs[i] if lr_cand < self.min_lrs[i] + self.eps else lr_cand
             param_group['lr'] = new_lr
             if self.verbose:
                 print('Epoch {:5d}: reducing learning rate'
                         ' of group {} to {:.4e}.'.format(epoch, i, new_lr))
+
+    def _is_valid_lr(self, lr, allow_None=False):
+        if allow_None and lr is None:
+            return True
+        elif isinstance(lr, list) or isinstance(lr, tuple):
+            return all([v>0 for v in lr])
+        else:
+            return lr > 0
+        
