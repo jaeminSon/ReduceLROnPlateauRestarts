@@ -1,6 +1,6 @@
 import pytest
 
-from scheduler import ReduceLROnPlateauAnnealing
+from scheduler import ReduceLROnPlateauRestarts
 
 
 class Test:
@@ -12,7 +12,7 @@ class Test:
 
         optimizer = torch.optim.AdamW(resnet18().parameters(), max_lr)
         n_param_groups = len(optimizer.param_groups)
-        lr_scheduler = ReduceLROnPlateauAnnealing(optimizer, [min_lr]*n_param_groups, [max_lr]*n_param_groups, patience=patience)
+        lr_scheduler = ReduceLROnPlateauRestarts(optimizer, [min_lr]*n_param_groups, [max_lr]*n_param_groups, patience=patience)
         
         list_lr = []
         for _ in range(100):
@@ -30,7 +30,7 @@ class Test:
 
         optimizer = torch.optim.AdamW(resnet18().parameters(), max_lr)
         n_param_groups = len(optimizer.param_groups)
-        lr_scheduler = ReduceLROnPlateauAnnealing(torch.optim.AdamW(resnet18().parameters(), max_lr), [min_lr]*n_param_groups, [max_lr]*n_param_groups, patience=patience)
+        lr_scheduler = ReduceLROnPlateauRestarts(torch.optim.AdamW(resnet18().parameters(), max_lr), [min_lr]*n_param_groups, [max_lr]*n_param_groups, patience=patience)
 
         list_lr = []
         for i in range(100):
@@ -46,7 +46,7 @@ class Test:
         import torch
         from torchvision.models import resnet18
 
-        lr_scheduler = ReduceLROnPlateauAnnealing(torch.optim.AdamW(resnet18().parameters(), max_lr), min_lr, max_lr, patience=patience)
+        lr_scheduler = ReduceLROnPlateauRestarts(torch.optim.AdamW(resnet18().parameters(), max_lr), min_lr, max_lr, patience=patience)
 
         list_lr = []
         for _ in range(100):
@@ -62,7 +62,7 @@ class Test:
         import torch
         from torchvision.models import resnet18
 
-        lr_scheduler = ReduceLROnPlateauAnnealing(torch.optim.AdamW(resnet18().parameters(), max_lr), min_lr, max_lr, patience=patience)
+        lr_scheduler = ReduceLROnPlateauRestarts(torch.optim.AdamW(resnet18().parameters(), max_lr), min_lr, max_lr, patience=patience)
 
         list_lr = []
         for i in range(100):
