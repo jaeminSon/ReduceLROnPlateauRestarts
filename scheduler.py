@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-class ReduceLROnPlateauAnnealing(ReduceLROnPlateau):
+class ReduceLROnPlateauRestarts(ReduceLROnPlateau):
     """Reduce learning rate when a metric has stopped improving.
     Models often benefit from reducing the learning rate by a factor
     of 2-10 once learning stagnates. This scheduler reads a metrics
@@ -44,7 +44,7 @@ class ReduceLROnPlateauAnnealing(ReduceLROnPlateau):
 
     Example:
         >>> optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
-        >>> scheduler = ReduceLROnPlateauAnnealing(optimizer, min_lr=5e-5, max_lr=1e-1)
+        >>> scheduler = ReduceLROnPlateauRestarts(optimizer, min_lr=5e-5, max_lr=1e-1)
         >>> for epoch in range(10):
         >>>     train(...)
         >>>     val_loss = validate(...)
@@ -56,7 +56,7 @@ class ReduceLROnPlateauAnnealing(ReduceLROnPlateau):
                  eps=1e-8, verbose=False):
         assert self._is_valid_lr(min_lr) and self._is_valid_lr(max_lr, allow_None=True)
 
-        super(ReduceLROnPlateauAnnealing, self).__init__(optimizer, mode=mode, factor=factor, patience=patience,
+        super(ReduceLROnPlateauRestarts, self).__init__(optimizer, mode=mode, factor=factor, patience=patience,
                                                 threshold=threshold, threshold_mode=threshold_mode, cooldown=cooldown,
                                                 min_lr=min_lr, eps=eps, verbose=verbose)
 
