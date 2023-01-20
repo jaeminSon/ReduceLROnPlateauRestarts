@@ -16,7 +16,7 @@
 ## Experiments
 - data: CIFAR10
 - augmentation: random crop (padding=4), horizontal flip
-- optimizer: SGD
+- optimizer: SGD (momentum=0.9, weight_decay=5e-4, nesterov=False)
 - lr: {max:1e-1, min=1e-4}
 - codebase: [autolrs](https://github.com/YuchenJin/autolrs)
 
